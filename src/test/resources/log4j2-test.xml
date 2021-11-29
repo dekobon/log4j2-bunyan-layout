@@ -4,15 +4,15 @@
         <CustomLevel name="LVL99" intLevel="99" />
     </CustomLevels>
     <Appenders>
-        <File name="MyFile" fileName="output.json" append="false">
+        <Console name="ConsoleAppender" target="SYSTEM_OUT" follow="true">
             <BunyanJsonLayout properties="true">
                 <ThrowableFormat format="extended" ignorePackages="org.junit"/>
             </BunyanJsonLayout>
-        </File>
+        </Console>
     </Appenders>
     <Loggers>
         <Root level="debug">
-            <AppenderRef ref="MyFile"/>
+            <AppenderRef ref="ConsoleAppender"/>
         </Root>
     </Loggers>
 </Configuration>
