@@ -316,7 +316,7 @@ public class LogEventJsonWriter implements JsonWriter.WriteObject<LogEvent> {
         }
 
         final ReadOnlyStringMap contextData = event.getContextData();
-        if (noTrailingComma && !contextData.isEmpty()) {
+        if (noTrailingComma && this.includeAllContextProperties && !contextData.isEmpty()) {
             writer.writeByte(JsonWriter.COMMA);
         }
 

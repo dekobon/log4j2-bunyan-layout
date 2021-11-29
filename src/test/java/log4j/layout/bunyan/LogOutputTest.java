@@ -14,6 +14,7 @@ import org.apache.logging.log4j.core.impl.MutableLogEvent;
 import org.apache.logging.log4j.core.util.KeyValuePair;
 import org.apache.logging.log4j.message.FormattedMessage;
 import org.apache.logging.log4j.message.Message;
+import org.apache.logging.log4j.message.SimpleMessage;
 import org.apache.logging.log4j.spi.DefaultThreadContextStack;
 import org.apache.logging.log4j.util.SortedArrayStringMap;
 import org.apache.logging.log4j.util.StringMap;
@@ -155,6 +156,31 @@ public class LogOutputTest {
                 validateEvent(event, json);
             }
         }
+    }
+
+    /**
+     * Reproduces bug where an extra comma is inserted despite
+     * properties=false.
+     *
+     * @see <a href="https://github.com/dekobon/log4j2-bunyan-layout/issues/1">#1</a>
+     */
+    @Test
+    void jsonIsValidIfPropertiesAreDisabled() throws IOException {
+        KeyValuePair keyValuePair = new KeyValuePair(
+                "traceId", "$${ctx:traceId:-}");
+        final BunyanJsonLayout layout = instance(
+                new KeyValuePair[] { keyValuePair },
+                null, false);
+        final MutableLogEvent event = new MutableLogEvent();
+        event.setTimeMillis(System.currentTimeMillis());
+        event.setLoggerName(getClass().getName());
+        event.setLevel(Level.INFO);
+        event.setMessage(new SimpleMessage("hello"));
+        StringMap contextData = new SortedArrayStringMap();
+        contextData.putValue("traceId", "c0160ca6-50ba-11ec-a64b-fbca1ea30083");
+        event.setContextData(contextData);
+        String json = fauxLogger.formatEvent(event, layout);
+        validateEvent(event, json);
     }
 
     void validateEvent(final LogEvent event, final String json) throws IOException {
