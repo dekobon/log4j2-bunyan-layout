@@ -156,6 +156,23 @@ public class LogOutputTest {
         }
     }
 
+    @Test
+    void wontInterpolateLog4jParamsInMessage() throws IOException {
+        final BunyanJsonLayout layout = instance(true);
+        final String badString = "Java version: ${java:version}";
+
+        MutableLogEvent event = new MutableLogEvent();
+        event.setTimeMillis(System.currentTimeMillis());
+        event.setLevel(Level.INFO);
+        event.setLoggerName(getClass().getName());
+        Message message = new FormattedMessage(badString);
+        event.setMessage(message);
+        String json = fauxLogger.formatEvent(event, layout);
+        final JsonNode jsonNode = objectMapper.readValue(json, JsonNode.class);
+        final String msgText = jsonNode.get("msg").asText();
+        assertEquals(badString, msgText);
+    }
+
     /**
      * Reproduces bug where an extra comma is inserted despite
      * properties=false.
