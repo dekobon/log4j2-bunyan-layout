@@ -20,7 +20,11 @@ import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.Node;
-import org.apache.logging.log4j.core.config.plugins.*;
+import org.apache.logging.log4j.core.config.plugins.Plugin;
+import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
+import org.apache.logging.log4j.core.config.plugins.PluginConfiguration;
+import org.apache.logging.log4j.core.config.plugins.PluginElement;
+import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.ByteBufferDestination;
 import org.apache.logging.log4j.core.lookup.StrSubstitutor;
 import org.apache.logging.log4j.core.pattern.ThrowablePatternConverter;
@@ -61,7 +65,11 @@ public class BunyanJsonLayout implements Layout<String> {
     /**
      * JSON serialization library.
      */
-    protected final DslJson<LogEvent> dslJson = new DslJson<>();
+    protected static final DslJson<LogEvent> DSL_JSON = new DslJson<>();
+    /**
+     * JSON serialization writer as ThreadLocal to allow for one writer per thread.
+     */
+    protected final ThreadLocal<JsonWriter> writerThreadLocal = ThreadLocal.withInitial(DSL_JSON::newWriter);
 
     @PluginFactory
     public static BunyanJsonLayout createLayout(
@@ -90,7 +98,7 @@ public class BunyanJsonLayout implements Layout<String> {
     }
 
     protected BunyanJsonLayout(final LogEventJsonWriter jsonWriter) {
-        dslJson.registerWriter(LogEvent.class, jsonWriter);
+        DSL_JSON.registerWriter(LogEvent.class, jsonWriter);
     }
 
     @Override
@@ -118,10 +126,13 @@ public class BunyanJsonLayout implements Layout<String> {
 
     @Override
     public String toSerializable(LogEvent event) {
+        final JsonWriter writer = writerThreadLocal.get();
+
         try {
-            final JsonWriter writer = dslJson.newWriter();
-            dslJson.serialize(writer, event);
-            return writer.toString();
+            DSL_JSON.serialize(writer, event);
+            final String line = writer.toString();
+            writer.reset();
+            return line;
         } catch (IOException e) {
             LOGGER.error("Unable to serialize log event to bunyan format", e);
             return "";
@@ -130,10 +141,13 @@ public class BunyanJsonLayout implements Layout<String> {
 
     @Override
     public byte[] toByteArray(final LogEvent event) {
+        final JsonWriter writer = writerThreadLocal.get();
+
         try {
-            final JsonWriter writer = dslJson.newWriter();
-            dslJson.serialize(writer, event);
-            return writer.toByteArray();
+            DSL_JSON.serialize(writer, event);
+            final byte[] bytes = writer.toByteArray();
+            writer.reset();
+            return bytes;
         } catch (IOException e) {
             LOGGER.error("Unable to serialize log event to bunyan format", e);
             return new byte[0];
@@ -152,7 +166,7 @@ public class BunyanJsonLayout implements Layout<String> {
         stream.setDestination(destination);
 
         try {
-            dslJson.serialize(event, stream);
+            DSL_JSON.serialize(event, stream);
         } catch (IOException e) {
             LOGGER.error("Unable to serialize to bunyan format", e);
         }

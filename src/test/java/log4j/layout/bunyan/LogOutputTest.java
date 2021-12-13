@@ -23,9 +23,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -133,10 +130,11 @@ public class LogOutputTest {
 
         try (NaughtyStrings naughtyStrings = new NaughtyStrings()) {
             final StringMap contextData = new SortedArrayStringMap();
+            final long timestamp = System.currentTimeMillis();
 
             for (String string : naughtyStrings) {
                 MutableLogEvent event = new MutableLogEvent();
-                event.setTimeMillis(System.currentTimeMillis());
+                event.setTimeMillis(timestamp);
                 event.setLevel(Level.INFO);
                 event.setLoggerName(getClass().getName());
                 Throwable t = new RuntimeException(string);
@@ -240,8 +238,8 @@ public class LogOutputTest {
     }
 
     static String formatAsUTCTimestamp(final long epochMillis) {
-        final Instant instant = Instant.ofEpochMilli(epochMillis);
-        return ZonedDateTime.ofInstant(instant, ZoneOffset.UTC)
-                .format(DateTimeFormatter.ISO_INSTANT);
+        StringBuilder buffer = new StringBuilder();
+        DatePatternConverterFactory.instance().format(epochMillis, buffer);
+        return buffer.toString();
     }
 }
