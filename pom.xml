@@ -53,11 +53,11 @@
 
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
         <maven.min.version>3.6</maven.min.version>
-        <dependency.log4j2.version>2.14.1</dependency.log4j2.version>
+        <dependency.log4j2.version>2.15.0</dependency.log4j2.version>
         <dependency.commons-text.version>1.9</dependency.commons-text.version>
         <dependency.jackson.version>2.13.0</dependency.jackson.version>
         <dependency.dsljson.version>1.9.9</dependency.dsljson.version>
-        <dependency.junit-jupiter-engine.version>5.8.1</dependency.junit-jupiter-engine.version>
+        <dependency.junit-jupiter-engine.version>5.8.2</dependency.junit-jupiter-engine.version>
         <plugin.maven-compiler.version>3.8.1</plugin.maven-compiler.version>
         <plugin.maven-shade.version>3.2.4</plugin.maven-shade.version>
         <plugin.maven-jar.version>3.2.0</plugin.maven-jar.version>
