@@ -22,13 +22,12 @@ Add a dependency definition to your Maven pom.xml:
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.14.1</version>
-            <scope>provided</scope>
+            <version>2.16.0</version>
         </dependency>
         <dependency>
             <groupId>com.github.dekobon</groupId>
             <artifactId>log4j2-bunyan-layout</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.3</version>
         </dependency>
     </dependencies>
 </project>
