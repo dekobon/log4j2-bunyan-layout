@@ -65,7 +65,7 @@ To perform a release:
 files in your workspace:
 `mvn clean && git status`
 3. Prepare the release:
-4. `mvn release:clean release:prepare`
+ `mvn release:clean release:prepare`
 4. Enter the version to be associated with this release.
 You should be prompted for this version number, and the default assumed version
 will be shown and should correspond to the version that was in the pom.xml
