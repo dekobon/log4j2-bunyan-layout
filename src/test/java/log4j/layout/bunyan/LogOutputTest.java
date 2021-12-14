@@ -23,6 +23,9 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -255,8 +258,8 @@ public class LogOutputTest {
     }
 
     static String formatAsUTCTimestamp(final long epochMillis) {
-        StringBuilder buffer = new StringBuilder();
-        DatePatternConverterFactory.instance().format(epochMillis, buffer);
-        return buffer.toString();
+        final Instant instant = Instant.ofEpochMilli(epochMillis);
+        return ZonedDateTime.ofInstant(instant, ZoneOffset.UTC)
+                .format(DateTimeFormatter.ISO_INSTANT);
     }
 }
