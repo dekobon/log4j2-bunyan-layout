@@ -40,7 +40,7 @@ appender. For example, a minimal configuration would look like:
 <Configuration>
     <Appenders>
         <File name="MyFile" fileName="output.json">
-            <BunyanJsonLayout />
+            <BunyanJsonLayout appName="space-explorer"/>
         </File>
     </Appenders>
     <Loggers>
@@ -56,7 +56,7 @@ A more robust configuration may look like:
 ```xml
 ...
         <File name="MyFile" fileName="output.json">
-            <BunyanJsonLayout endOfLine="\n" maxMessageLength="1000" properties="false">
+            <BunyanJsonLayout appName="road-hopper" endOfLine="\n" maxMessageLength="1000" properties="false">
                 <ThrowableFormat format="extended" ignorePackages="org.junit"/>
                 <KeyValuePair key="additionalField" value="constant value"/>
                 <KeyValuePair key="traceId" value="$${ctx:trace_id:-}"/>
@@ -68,6 +68,7 @@ A more robust configuration may look like:
 The layout has the following properties.
 
 ### `BunyanJsonLayout`
+ * `appName` (required) - string to use as application name in bunyan log messages.
  * `endOfLine` - string to append to the end of each JSON object (default: (Unix new line) `\n`).
    This property accepts Java style escaped values such as: `\n`, `\r`, `\t`, `\0`. 
    If there are octals, unicode, or any sort of non-trivial escapes in

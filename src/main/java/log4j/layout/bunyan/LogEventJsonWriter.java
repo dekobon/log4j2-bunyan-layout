@@ -32,8 +32,10 @@ import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -47,6 +49,7 @@ public class LogEventJsonWriter implements JsonWriter.WriteObject<LogEvent> {
     private static final byte[] PID_BYTES = String.format("\"pid\":%d", lookupPid())
             .getBytes(StandardCharsets.UTF_8);
     private static final ThreadLocal<StringBuilder> buffer = ThreadLocal.withInitial(StringBuilder::new);
+    private static final Set<String> RESERVED_KEYS = reservedKeys();
 
     private final byte[] eol;
     private final int maxMessageLength;
@@ -58,8 +61,10 @@ public class LogEventJsonWriter implements JsonWriter.WriteObject<LogEvent> {
     private final DatePatternConverter datePatternConverter = DatePatternConverterFactory.instance();
     private final ContextPropertiesTriConsumer contextPropertiesTriConsumer =
             new ContextPropertiesTriConsumer(buffer);
+    private final String appName;
 
-    public LogEventJsonWriter(final ThrowablePatternConverter throwablePatternConverter,
+    public LogEventJsonWriter(final String rawAppName,
+                              final ThrowablePatternConverter throwablePatternConverter,
                               final KeyValuePair[] additionalFields,
                               final StrSubstitutor strSubstitutor,
                               final boolean includeAllContextProperties,
@@ -70,10 +75,16 @@ public class LogEventJsonWriter implements JsonWriter.WriteObject<LogEvent> {
         this.maxMessageLength = maxMessageLength;
         this.strSubstitutor = strSubstitutor;
         this.includeAllContextProperties = includeAllContextProperties;
+        this.appName = initAppName(rawAppName);
         final List<KeyValuePair> dynamicFields = new LinkedList<>();
         final List<KeyValuePair> staticFields = new LinkedList<>();
         final Set<String> uniqueNames = new HashSet<>(additionalFields.length);
         for (KeyValuePair kv : additionalFields) {
+            if (RESERVED_KEYS.contains(kv.getKey())) {
+                LOGGER.warn("Discarding KeyValuePair because it uses a "
+                    + "reserved term [key={}]", kv.getKey());
+                continue;
+            }
             if (uniqueNames.contains(kv.getKey())) {
                 String msg = String.format("Duplicate key (%s) specified for KeyValuePair", kv.getKey());
                 throw new IllegalArgumentException(msg);
@@ -90,6 +101,10 @@ public class LogEventJsonWriter implements JsonWriter.WriteObject<LogEvent> {
         dynamicFields.toArray(this.dynamicAdditionalFields);
         this.staticAdditionalFields = new KeyValuePair[staticFields.size()];
         staticFields.toArray(this.staticAdditionalFields);
+    }
+
+    protected String initAppName(final String rawAppName) {
+        return strSubstitutor.replace(rawAppName);
     }
 
     @Override
@@ -125,6 +140,8 @@ public class LogEventJsonWriter implements JsonWriter.WriteObject<LogEvent> {
         writer.writeByte(JsonWriter.COMMA);
         writeLevel(writer, event.getLevel());
         writer.writeByte(JsonWriter.COMMA);
+        writeStringKeyVal(writer, "name", appName);
+        writer.writeByte(JsonWriter.COMMA);
         writeLoggerName(writer, event);
         writer.writeByte(JsonWriter.COMMA);
         writeStringKeyVal(writer, "hostname", HOSTNAME);
@@ -154,7 +171,7 @@ public class LogEventJsonWriter implements JsonWriter.WriteObject<LogEvent> {
     }
 
     protected void writeLoggerName(final JsonWriter writer, final LogEvent event) {
-        writeKey(writer, "name");
+        writeKey(writer, "component");
         writer.writeString(event.getLoggerName());
     }
 
@@ -386,5 +403,19 @@ public class LogEventJsonWriter implements JsonWriter.WriteObject<LogEvent> {
             }
         }
         return -1;
+    }
+
+    protected static Set<String> reservedKeys() {
+        final Set<String> reserved = new LinkedHashSet<>();
+        reserved.add("v");
+        reserved.add("name");
+        reserved.add("component");
+        reserved.add("hostname");
+        reserved.add("pid");
+        reserved.add("time");
+        reserved.add("msg");
+        reserved.add("src");
+        reserved.add("thread");
+        return Collections.unmodifiableSet(reserved);
     }
 }

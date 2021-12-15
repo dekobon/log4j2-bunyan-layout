@@ -75,10 +75,17 @@ public class BunyanJsonLayout implements Layout<String> {
     public static BunyanJsonLayout createLayout(
             @PluginElement("AdditionalField") final KeyValuePair[] additionalFields,
             @PluginElement("ThrowableFormat") final BunyanThrowableFormat throwableFormat,
+            @PluginAttribute("appName") final String appName,
             @PluginAttribute("endOfLine") final String lineSeparator,
             @PluginAttribute("properties") final boolean includeAllContextProperties,
             @PluginAttribute(value = "maxMessageLength", defaultInt = DEFAULT_MAX_MESSAGE_LENGTH) final int maxMessageLength,
             @PluginConfiguration Configuration configuration) {
+        if (appName == null || appName.isEmpty()) {
+            String msg = String.format("appName attribute must be set when using %s",
+                    BunyanJsonLayout.class.getSimpleName());
+            throw new IllegalArgumentException(msg);
+        }
+
         final String eol;
         if (lineSeparator == null) {
             eol = "\n";
@@ -90,7 +97,8 @@ public class BunyanJsonLayout implements Layout<String> {
                 ThrowablePatternConverterFactory.instance(throwableFormat, eol, configuration);
 
         final StrSubstitutor strSubstitutor = configuration.getStrSubstitutor();
-        final LogEventJsonWriter jsonWriter = new LogEventJsonWriter(throwablePatternConverter,
+        final LogEventJsonWriter jsonWriter = new LogEventJsonWriter(
+                appName, throwablePatternConverter,
                 additionalFields, strSubstitutor, includeAllContextProperties,
                 eol.getBytes(StandardCharsets.UTF_8), maxMessageLength);
 

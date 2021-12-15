@@ -20,7 +20,8 @@ public class BunyanJsonLayoutTest {
         final BunyanThrowableFormat throwableFormat = null;
         final boolean includeAllContextProperties = false;
 
-        final BunyanJsonLayout instance = BunyanJsonLayout.createLayout(additionalFields, throwableFormat, eol,
+        final BunyanJsonLayout instance = BunyanJsonLayout.createLayout(
+                additionalFields, throwableFormat, "unit-test", eol,
                 includeAllContextProperties, BunyanJsonLayout.DEFAULT_MAX_MESSAGE_LENGTH, config);
         assertNotNull(instance);
         final MutableLogEvent event = new MutableLogEvent();
@@ -39,7 +40,8 @@ public class BunyanJsonLayoutTest {
         final BunyanThrowableFormat throwableFormat = null;
         final boolean includeAllContextProperties = false;
 
-        final BunyanJsonLayout instance = BunyanJsonLayout.createLayout(additionalFields, throwableFormat, eol,
+        final BunyanJsonLayout instance = BunyanJsonLayout.createLayout(
+                additionalFields, throwableFormat, "unit-test", eol,
                 includeAllContextProperties, BunyanJsonLayout.DEFAULT_MAX_MESSAGE_LENGTH, config);
         assertNotNull(instance);
         final MutableLogEvent event = new MutableLogEvent();
@@ -58,7 +60,8 @@ public class BunyanJsonLayoutTest {
         final BunyanThrowableFormat throwableFormat = null;
         final boolean includeAllContextProperties = false;
 
-        final BunyanJsonLayout instance = BunyanJsonLayout.createLayout(additionalFields, throwableFormat, eol,
+        final BunyanJsonLayout instance = BunyanJsonLayout.createLayout(
+                additionalFields, throwableFormat, "unit-test", eol,
                 includeAllContextProperties, BunyanJsonLayout.DEFAULT_MAX_MESSAGE_LENGTH, config);
         assertNotNull(instance);
         final MutableLogEvent event = new MutableLogEvent();

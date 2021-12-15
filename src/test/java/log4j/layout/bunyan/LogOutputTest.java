@@ -32,6 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LogOutputTest {
+    private static final String appName = "output-test";
+
     public static class FauxLogger {
         public String formatEvent(final LogEvent event, final Layout<?> layout) {
             return new String(layout.toByteArray(event), StandardCharsets.UTF_8);
@@ -55,7 +57,8 @@ public class LogOutputTest {
         final String eol = "\n";
         final Configuration config = new NullConfiguration();
 
-        return BunyanJsonLayout.createLayout(additionalFields, throwableFormat, eol,
+        return BunyanJsonLayout.createLayout(additionalFields, throwableFormat,
+                appName, eol,
                 includeAllContextProperties, BunyanJsonLayout.DEFAULT_MAX_MESSAGE_LENGTH, config);
     }
 
@@ -223,7 +226,8 @@ public class LogOutputTest {
                 assertEquals(level.name(), jsonNode.get("level_name").asText());
             }
 
-            assertEquals(event.getLoggerName(), jsonNode.get("name").asText());
+            assertEquals(appName, jsonNode.get("name").asText());
+            assertEquals(event.getLoggerName(), jsonNode.get("component").asText());
             String timestampStr = formatAsUTCTimestamp(event.getTimeMillis());
             Instant timestamp = Instant.parse(timestampStr);
             assertEquals(timestamp, Instant.parse(jsonNode.get("time").asText()));
