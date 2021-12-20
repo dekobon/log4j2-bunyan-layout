@@ -53,7 +53,7 @@
 
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
         <maven.min.version>3.6</maven.min.version>
-        <dependency.log4j2.version>2.16.0</dependency.log4j2.version>
+        <dependency.log4j2.version>2.17.0</dependency.log4j2.version>
         <dependency.commons-text.version>1.9</dependency.commons-text.version>
         <dependency.jackson.version>2.13.0</dependency.jackson.version>
         <dependency.dsljson.version>1.9.9</dependency.dsljson.version>
