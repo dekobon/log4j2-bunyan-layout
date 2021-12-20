@@ -66,6 +66,7 @@
         <plugin.maven-jarsigner.version>3.0.0</plugin.maven-jarsigner.version>
         <plugin.maven-install.version>2.5.2</plugin.maven-install.version>
         <plugin.maven-gpg.version>3.0.1</plugin.maven-gpg.version>
+        <plugin.maven-surefire.version>2.22.2</plugin.maven-surefire.version>
     </properties>
 
     <dependencies>
@@ -179,6 +180,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${plugin.maven-javadoc.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${plugin.maven-surefire.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
