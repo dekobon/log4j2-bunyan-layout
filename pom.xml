@@ -4,7 +4,7 @@
 
     <groupId>com.github.dekobon</groupId>
     <artifactId>log4j2-bunyan-layout</artifactId>
-    <version>1.0.8</version>
+    <version>1.0.9-SNAPSHOT</version>
 
     <name>Log4j2 Bunyan Layout</name>
     <description>Log4j2 Bunyan JSON Format Layout</description>
@@ -19,7 +19,7 @@
         <connection>scm:git:git://github.com/dekobon/log4j2-bunyan-layout.git</connection>
         <developerConnection>scm:git:git://github.com/dekobon/log4j2-bunyan-layout.git</developerConnection>
         <url>git@github.com:dekobon/log4j2-bunyan-layout.git</url>
-        <tag>log4j2-bunyan-layout-1.0.8</tag>
+        <tag>HEAD</tag>
     </scm>
     <issueManagement>
         <system>github.com</system>
